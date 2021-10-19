@@ -1,0 +1,27 @@
+{
+    "name": "dev_camper",
+    "version": "1.0.0",
+    "description": "Dev_Camper Back-End API",
+    "main": "server.js",
+    "scripts": {
+        "start": "NODE_ENV=production node server.js",
+        "dev": "nodemon server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Gerald-Izuchukwu/Dev_Camper.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Gerald-Izuchukwu/Dev_Camper/issues"
+    },
+    "homepage": "https://github.com/Gerald-Izuchukwu/Dev_Camper#readme",
+    "devDependencies": {
+        "nodemon": "^2.0.13"
+    },
+    "dependencies": {
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1"
+    }
+}
