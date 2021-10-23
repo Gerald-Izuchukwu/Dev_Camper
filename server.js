@@ -1,14 +1,19 @@
 const express = require('express');
-// const config = require('config');
-const dotenv = require('dotenv');
-// routes
 const bootcamps = require('./routes/bootcamps');
-
-// load environmental variables
+const morgan = require('morgan');
+const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 
 // initialize express
 const app = express();
+
+// logger middleware
+// const logger = require('./middleware/logger');
+// app.use(logger);
+
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
 
 // mount routes
 app.use('/api/v1/bootcamps', bootcamps);
