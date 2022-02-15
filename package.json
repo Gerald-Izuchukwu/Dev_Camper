@@ -4,7 +4,7 @@
     "description": "Dev_Camper Back-End API",
     "main": "server.js",
     "scripts": {
-        "start": "NODE_ENV=production node server.js",
+        "start": " SET NODE_ENV=production node server",
         "dev": "nodemon server.js"
     },
     "repository": {
@@ -21,6 +21,7 @@
         "nodemon": "^2.0.13"
     },
     "dependencies": {
+        "colors": "^1.4.0",
         "dotenv": "^10.0.0",
         "express": "^4.17.1",
         "morgan": "^1.10.0"
