@@ -4,6 +4,8 @@ const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
 const bootcamps = require('./routes/bootcamps');
+const courses = require('./routes/courses');
+const fileUpload = require('express-fileupload');
 // const Bootcamp = require('./models/Bootcamp');
 const colors = require('colors');
 const errorHandler = require('./middleware/error');
@@ -20,8 +22,12 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
+//file upload middleware
+app.use(fileUpload());
+
 // mount routes
 app.use('/api/v1/bootcamps', bootcamps);
+app.use('/api/v1/courses', courses);
 
 // error Handler
 app.use(errorHandler);

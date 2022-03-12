@@ -8,6 +8,7 @@ dotenv.config({ path: './config/config.env' });
 
 // load models
 const Bootcamp = require('./models/Bootcamp.js');
+const Course = require('./models/Course');
 
 // connecting to database
 mongoose.connect(process.env.MONGO_URI, {
@@ -22,13 +23,17 @@ const bootcamps = JSON.parse(
     fs.readFileSync(`${__dirname}/_data/bootcamps.json`, 'utf-8')
 );
 
+const courses = JSON.parse(
+    fs.readFileSync(`${__dirname}/_data/courses.json`, 'utf-8')
+);
+
 // importing into database
 const importData = async () => {
     try {
         await Bootcamp.create(bootcamps); //use this
         // const bootcamps = await Bootcamp.create(); //dont use this because we dont want to return the created bootcamps
-
-        console.log('DAta imported.....'.green.inverse);
+        await Course.create(courses);
+        console.log('Data imported.....'.green.inverse);
         process.exit();
     } catch (err) {
         console.error(err);
@@ -38,6 +43,7 @@ const importData = async () => {
 const deleteData = async () => {
     try {
         await Bootcamp.deleteMany();
+        await Course.deleteMany();
         console.log('Data Deleted...'.red.inverse);
         process.exit();
     } catch (err) {
