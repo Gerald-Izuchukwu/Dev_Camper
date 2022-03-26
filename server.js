@@ -1,3 +1,4 @@
+const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
@@ -24,6 +25,8 @@ if (process.env.NODE_ENV === 'development') {
 
 //file upload middleware
 app.use(fileUpload());
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // mount routes
 app.use('/api/v1/bootcamps', bootcamps);

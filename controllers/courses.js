@@ -2,6 +2,7 @@ const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Bootcamp = require('../models/Bootcamp');
 const Course = require('../models/Course');
+const advancedResults = require('../middleware/advancedResult');
 
 // @desc      Add course
 // @route     POST /api/v1/bootcamps/:bootcampId/courses
@@ -33,26 +34,19 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
 // @route     GET /api/v1/bootcamps/:bootcampId/courses
 // @access    Public
 exports.getCourses = asyncHandler(async (req, res, next) => {
-    let query;
-
     if (req.params.bootcampID) {
-        query = Course.find({
+        const courses = Course.find({
             bootcamp: req.params.bootcampID,
         });
-    } else {
-        query = Course.find().populate({
-            path: 'bootcamp', //if you add.js to the bootcamp it would load just the iD
-            select: 'name description', // if you comma separate, only the last will show
+
+        return res.status(200).json({
+            success: true,
+            count: courses.length,
+            data: courses,
         });
+    } else {
+        res.status(200).json(advancedResults);
     }
-
-    const courses = await query;
-
-    res.status(200).json({
-        success: true,
-        count: courses.length,
-        data: courses,
-    });
 });
 
 // @desc      Get single course
