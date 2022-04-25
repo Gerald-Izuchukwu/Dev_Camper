@@ -8,6 +8,23 @@ const Bootcamp = require('../models/Bootcamp');
 //route     POST /api/v1/bootcamps
 //access    Private
 exports.createBootcamps = asyncHandler(async (req, res, next) => {
+    // since we cannot submit the user id, it cannot just be gotten from req.body, so get it from req.user
+    req.body.user = req.user.id;
+
+    // check to see if a user has published a bootcamp before
+    const publishedBootcamp = await Bootcamp.findOne({
+        user: req.user.id,
+    });
+
+    if (publishedBootcamp && req.user.role !== 'admin') {
+        //check this later admin works but Admin doesn't
+        return next(
+            new ErrorResponse(
+                'You cannot perform this action because you have added a bootcamp already',
+                400
+            )
+        );
+    }
     const bootcamp = await Bootcamp.create(req.body);
 
     res.status(201).json({
@@ -69,13 +86,25 @@ exports.getBootcampInRadius = asyncHandler(async (req, res, next) => {
 //route     PUT /api/v1/bootcamps/:Id
 //access    Private
 exports.updateBootcamp = asyncHandler(async (req, res, next) => {
-    const bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true,
-    });
+    let bootcamp = await Bootcamp.findById(req.params.id);
+
     if (!bootcamp) {
         return next(new ErrorResponse('Bootcamp NOT FOUND', 404));
     }
+
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
+            )
+        );
+    }
+
+    bootcamp = await Bootcamp.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+    });
     res.status(203).json({
         msg: 'Success!!',
         data: bootcamp,
@@ -90,6 +119,15 @@ exports.deleteBootcamp = asyncHandler(async (req, res, next) => {
 
     if (!bootcamp) {
         return next(new ErrorResponse('Bootcamp NOT FOUND', 404));
+    }
+
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
+            )
+        );
     }
 
     await bootcamp.remove();
@@ -112,6 +150,15 @@ exports.bootcampPhotoUpload = asyncHandler(async (req, res, next) => {
 
     if (!bootcamp) {
         return next(new ErrorResponse(`No Bootcamp with that id exists`, 404));
+    }
+
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
+            )
+        );
     }
 
     if (!req.files) {
