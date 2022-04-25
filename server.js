@@ -4,11 +4,11 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config/config.env' });
+const cookieParser = require('cookie-parser');
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const auth = require('./routes/auth');
 const fileUpload = require('express-fileupload');
-// const Bootcamp = require('./models/Bootcamp');
 const colors = require('colors');
 const errorHandler = require('./middleware/error');
 
@@ -17,7 +17,11 @@ connectDB();
 // initialize express
 const app = express();
 
+// body parser
 app.use(express.json());
+
+// cookie parser
+app.use(cookieParser());
 
 // morgan logger
 if (process.env.NODE_ENV === 'development') {
