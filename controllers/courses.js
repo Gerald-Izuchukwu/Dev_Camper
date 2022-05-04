@@ -9,6 +9,7 @@ const advancedResults = require('../middleware/advancedResult');
 // @access    Private
 exports.addCourse = asyncHandler(async (req, res, next) => {
     req.body.bootcamp = req.params.bootcampID;
+    req.body.user = req.user.id;
 
     const bootcamp = await Bootcamp.findById(req.params.bootcampID);
 
@@ -18,6 +19,15 @@ exports.addCourse = asyncHandler(async (req, res, next) => {
                 `No Bootcamp with the id of  ${req.params.bootcampID}`
             ),
             404
+        );
+    }
+    // making sure its the bootcamp owner
+    if (bootcamp.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
+            )
         );
     }
     const course = await Course.create(req.body);
@@ -82,6 +92,15 @@ exports.updateCourse = asyncHandler(async (req, res, next) => {
             new ErrorResponse(`No Course with the id of ${req.params.id} exist`)
         );
     }
+    // making sure that user is the owner of course
+    if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
+            )
+        );
+    }
 
     course = await Course.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
@@ -106,6 +125,16 @@ exports.deleteCourse = asyncHandler(async (req, res, next) => {
             new ErrorResponse(
                 `No Course with the id of ${req.params.id} exists`,
                 404
+            )
+        );
+    }
+
+    // making sure that user is the owner of course
+    if (course.user.toString() !== req.user.id && req.user.role !== 'admin') {
+        return next(
+            new ErrorResponse(
+                `You are not allowed to perform this operation`,
+                401
             )
         );
     }

@@ -1,4 +1,5 @@
 const ErrorResponse = require('../utils/errorResponse');
+const sendEmail = require('../utils/sendEmail');
 const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
 
@@ -44,6 +45,40 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 });
 
+exports.getMe = asyncHandler(async (req, res, next) => {
+    const user = await User.findById(req.user.id);
+
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+});
+
+exports.forgotPassword = asyncHandler(async (req, res, next) => {
+    // first find the user using the email provided
+    const user = await User.findOne({ email: req.body.email });
+
+    if (!user) {
+        return next(
+            new ErrorResponse(
+                `No user with the email found ${req.body.email} found`,
+                404
+            )
+        );
+    }
+
+    // get reset token
+    const resetToken = user.getResetPasswordToken();
+    // console.log(resetToken);
+
+    await user.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+        success: true,
+        data: user,
+    });
+});
+
 const sendTokenResponse = (user, statusCode, res) => {
     // create token
     const token = user.getSignedJwtToken();
@@ -64,12 +99,3 @@ const sendTokenResponse = (user, statusCode, res) => {
         token,
     });
 };
-
-exports.getMe = asyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
-
-    res.status(200).json({
-        success: true,
-        data: user,
-    });
-});
