@@ -4,6 +4,9 @@ const asyncHandler = require('../middleware/async');
 const User = require('../models/User');
 const crypto = require('crypto');
 
+// @desc      Register user
+// @route     POST /api/v1/auth/register
+// @access    Public
 exports.registerUser = asyncHandler(async (req, res, next) => {
 	const { name, email, password, role } = req.body;
 
@@ -18,6 +21,9 @@ exports.registerUser = asyncHandler(async (req, res, next) => {
 	sendTokenResponse(user, 200, res);
 });
 
+// @desc      Login user
+// @route     POST /api/v1/auth/login
+// @access    Public
 exports.loginUser = asyncHandler(async (req, res, next) => {
 	const { email, password } = req.body;
 
@@ -46,6 +52,9 @@ exports.loginUser = asyncHandler(async (req, res, next) => {
 	sendTokenResponse(user, 200, res);
 });
 
+// @desc      Get current logged in user
+// @route     POST /api/v1/auth/me
+// @access    Private
 exports.getMe = asyncHandler(async (req, res, next) => {
 	const user = await User.findById(req.user.id);
 
@@ -55,6 +64,9 @@ exports.getMe = asyncHandler(async (req, res, next) => {
 	});
 });
 
+// @desc      Update user details
+// @route     PUT /api/v1/auth/updatedetails
+// @access    Private
 exports.updateDetails = asyncHandler(async (req, res, next) => {
 	const fieldsToUpdate = {
 		name: req.body.name,
@@ -71,6 +83,9 @@ exports.updateDetails = asyncHandler(async (req, res, next) => {
 	});
 });
 
+// @desc      Update password
+// @route     PUT /api/v1/auth/updatepassword
+// @access    Private
 exports.updatePassword = asyncHandler(async (req, res, next) => {
 	const user = await User.findById(req.user.id).select('+password');
 
@@ -89,6 +104,9 @@ exports.updatePassword = asyncHandler(async (req, res, next) => {
 	sendTokenResponse(user, 200, res);
 });
 
+// @desc      Forgot password
+// @route     POST /api/v1/auth/forgotpassword
+// @access    Public
 exports.forgotPassword = asyncHandler(async (req, res, next) => {
 	// first find the user using the email provided
 	const user = await User.findOne({ email: req.body.email });
@@ -143,6 +161,9 @@ exports.forgotPassword = asyncHandler(async (req, res, next) => {
 	});
 });
 
+// @desc      Reset password
+// @route     PUT /api/v1/auth/resetpassword/:resettoken
+// @access    Public
 exports.resetPassword = asyncHandler(async (req, res, next) => {
 	// get hashed token
 	const resetPasswordToken = crypto
@@ -167,6 +188,7 @@ exports.resetPassword = asyncHandler(async (req, res, next) => {
 	sendTokenResponse(user, 200, res);
 });
 
+// Get token from model, create cookie and send response
 const sendTokenResponse = (user, statusCode, res) => {
 	// create token
 	const token = user.getSignedJwtToken();
