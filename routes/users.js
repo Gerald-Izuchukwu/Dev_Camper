@@ -6,16 +6,16 @@ const {
 	createUser,
 	updateUser,
 	deleteUser,
-} = require('..controllers/user');
+} = require('../controllers/users');
 const User = require('../models/User');
 const router = express.Router({ mergeParams: true });
 const advancedResults = require('../middleware/advancedResult');
-const { protect, authorize } = require('../middleware/auth');
+const { protect, authorizeARole } = require('../middleware/auth');
 
 router.use(protect);
-router.use(authorize('admin'));
+router.use(authorizeARole('admin'));
 
-router.route('/').get(advancedResult(User), getUsers).post(createUser);
+router.route('/').get(advancedResults(User), getUsers).post(createUser);
 router.route('/:id').get(getUser).put(updateUser).delete(deleteUser);
 
 module.exports = router;

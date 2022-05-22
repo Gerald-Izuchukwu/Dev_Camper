@@ -8,7 +8,7 @@ const cookieParser = require('cookie-parser');
 const bootcamps = require('./routes/bootcamps');
 const courses = require('./routes/courses');
 const auth = require('./routes/auth');
-const users = require('./routes/user');
+const users = require('./routes/users');
 const fileUpload = require('express-fileupload');
 const colors = require('colors');
 const errorHandler = require('./middleware/error');
@@ -43,7 +43,7 @@ app.use('/api/v1/users', users);
 // error Handler
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 app.listen(
 	PORT,
